@@ -265,7 +265,6 @@ async def main():
     await site.start()
     await app.start()
     print("--- Bot is Online ---")
-    await asyncio.Event().wait()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
