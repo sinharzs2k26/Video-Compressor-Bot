@@ -10,8 +10,7 @@ import math
 import shutil
 from datetime import datetime, timedelta
 from aiohttp import web
-from virtues import idle
-from pyrogram import Client, filters, enums
+from pyrogram import Client, filters, enums, idle
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pyrogram.errors import FloodWait
 
