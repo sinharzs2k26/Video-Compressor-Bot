@@ -10,6 +10,7 @@ import math
 import shutil
 from datetime import datetime, timedelta
 from aiohttp import web
+from virtues import idle
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pyrogram.errors import FloodWait
@@ -265,7 +266,7 @@ async def main():
     await site.start()
     await app.start()
     print("--- Bot is Online ---")
+    await idle()
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
