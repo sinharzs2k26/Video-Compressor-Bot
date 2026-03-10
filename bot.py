@@ -92,11 +92,11 @@ async def clean_old_files():
 
 # --- BOT HANDLERS ---
 # Enable HTML parsing globally
-app = Client("VideoSensiBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, parse_mode=enums.ParseMode.HTML)
+app = Client("VideoCompressorBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, parse_mode=enums.ParseMode.HTML)
 
 @app.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    header = to_small_caps("Welcome to VideoSensi Compression Bot!")
+    header = to_small_caps("Welcome to Video Compression Bot!")
     await message.reply_text(
         f"<b>{header}</b>\n\n"
         "Send me any video to get started. I can compress large files up to 2GB.\n"
@@ -255,7 +255,7 @@ async def handle(request):
     return web.Response(text="Bot is running!")
     
 async def main():
-    print("--- VideoSensi Bot Starting ---")
+    print("--- VideoCompressor Bot Starting ---")
     asyncio.create_task(clean_old_files())
     
     server = web.Application()
