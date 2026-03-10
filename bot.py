@@ -96,11 +96,16 @@ app = Client("VideoCompressorBot", api_id=API_ID, api_hash=API_HASH, bot_token=B
 
 @app.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    header = to_small_caps("Welcome to Video Compression Bot!")
+    header = to_small_caps("👋 Welcome to the Video Compressor Bot!")
     await message.reply_text(
         f"<b>{header}</b>\n\n"
-        "Send me any video to get started. I can compress large files up to 2GB.\n"
-        "You can also send an image to set it as a custom thumbnail.",
+        "🎬 <b>Send me any video</b> and I will <b>compress</b> it to reduce the file size while <b>keeping good quality.</b>\n\n"
+        "✨ <b>Features</b>\n"
+        "📦 Compress videos up to 2GB\n"
+        "🖼️ Set a custom thumbnail for your video\n"
+        "⚡ Fast and automatic compression\n\n"
+        "📤 <b>Just send a video to get started!</b>\n\n"
+        "<i>If you want to add a custom thumbnail, send the image before uploading your video.</i>",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("Join Channel", url="https://t.me/Saikat_RandomZ")
         ]])
