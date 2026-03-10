@@ -10,7 +10,7 @@ import math
 import shutil
 from datetime import datetime, timedelta
 from aiohttp import web
-from pyrogram import Client, filters, enums, idle
+from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pyrogram.errors import FloodWait
 
@@ -257,15 +257,18 @@ async def handle(request):
 async def main():
     print("--- VideoSensi Bot Starting ---")
     asyncio.create_task(clean_old_files())
+    
     server = web.Application()
     server.router.add_get("/", handle)
     runner = web.AppRunner(server)
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", 10000)
     await site.start()
+    
     await app.start()
     print("--- Bot is Online ---")
-    await idle()
+    await asyncio.Event().wait()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
