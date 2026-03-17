@@ -30,16 +30,39 @@ os.makedirs(TEMP_DIR, exist_ok=True)
 user_data = {}
 admin_states = {}
 # --- HELPER FUNCTIONS ---
-def save_user(user_id):
-    with open("users.txt", "a+") as f:
-        f.seek(0)
-        users = f.read().splitlines()
-        if str(user_id) not in users:
-            f.write(f"{user_id}\n")
+def save_user_data(user_id, username, first_name, last_name):
+    username = str(username) if username else "No_Username"
+    first_name = str(first_name).replace(",", "")
+    last_name = (str(last_name) if last_name else "").replace(",", "")
+    exists = False
+    try:
+        with open("users.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith(f"{user_id},"):
+                    exists = True
+                    break
+    except FileNotFoundError:
+        pass
+    if not exists:
+        with open("users.txt", "a", encoding="utf-8") as f:
+            f.write(f"{user_id}, {username}, {first_name} {last_name}\n")
 
 def count_users():
     with open("users.txt", "r") as f:
         return len(f.readlines())
+
+def get_all_ids():
+    ids = []
+    try:
+        with open("users.txt", "r", encoding="utf-8") as f:
+            for line in f:
+                # Split by comma and take the first item (the ID)
+                user_id = line.strip().split(",")[0]
+                if user_id:
+                    ids.append(int(user_id))
+    except FileNotFoundError:
+        print("No users found yet.")
+    return ids
 
 def to_small_caps(text):
     """Converts text to small caps unicode characters."""
@@ -114,7 +137,13 @@ async def admin(client, message):
 
 @app.on_message(filters.command("start"))
 async def start_cmd(client, message):
-    save_user(message.from_user.id)
+    user = message.from_user
+    save_user_data(
+            user.id, 
+            user.username, 
+            user.first_name, 
+            user.last_name
+        )
     header = to_small_caps("👋 Welcome to the Video Compressor Bot!")
     await message.reply_text(
         f"<b>{header}</b>\n\n"
@@ -163,11 +192,14 @@ async def handle_video(client, message: Message):
 async def balkama(client, message: Message):
     if admin_states.get(message.from_user.id) == "waiting_for_msg":
         admin_states[message.from_user.id] = None
-        with open("users.txt", "r") as f:
-            user_ids = f.read().splitlines()
+        if not os.path.exists("users.txt"):
+            await message.reply_text("No users to broadcast to.")
+            return
+        users = get_all_ids()
+        status = await message.reply_text(f"🚀 Sending to {len(users)} users...")
         success = 0
         failed = 0
-        for uid in user_ids:
+        for uid in users:
             try:
                 await message.copy(chat_id=int(uid))
                 success += 1
@@ -175,7 +207,8 @@ async def balkama(client, message: Message):
             except:
                 failed += 1
         user_s = "users" if success > 1 else "user"
-        await message.reply_text(f"✅ Broadcast message sent to {success} {user_s}\nFailed: {failed}.")
+        fail_msg = f"\n❌ Failed {failed}" if failed > 0 else ""
+        await status.edit_text(f"✅ <b>Broadcast Done</b>\nSent to {success} {user_s}.{fail_msg}")
     else:
         user_id = message.from_user.id
         if user_id not in user_data:
